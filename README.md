@@ -13,6 +13,7 @@ Features of golang :
  9) well-suited for writing networked and distributed systems
  10) Instead of classes we have structs in golang
  11) one entry point i.e, main function 
+ 12) everything considered as types in golang , ex: function is types in golang so we can also pass it on another function
 
 
 
