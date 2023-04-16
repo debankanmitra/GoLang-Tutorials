@@ -27,4 +27,16 @@ func main() {
 		fmt.Println("the num is ", num)
 
 	}
+
+	// goto statement
+	count := 10
+
+	for i := 0; i < count; i++ {
+		if i == 2 {
+			goto lco
+		}
+	}
+
+lco: // label is similar to varibale
+	fmt.Println("go to google.com")
 }
