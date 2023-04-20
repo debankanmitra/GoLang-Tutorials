@@ -13,12 +13,12 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	// passing function inside function
+	// passing controller inside function
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("<h1>THIS IS HOME PAGE FROM GORILLA</h1>"))
 	})
 
-	// using handler function separately
+	// using controller function separately
 	r.HandleFunc("/products", ProductsHandler).Methods("GET")
 
 	// listening on port 3000
