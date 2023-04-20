@@ -3,7 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -26,7 +29,8 @@ var Courses []course
 
 // Middleware , helper - file
 func (c *course) IsEmpty() bool {
-	return c.CourseId == "" && c.CourseName == ""
+	//return c.CourseId == "" && c.CourseName == ""
+	return c.CourseName == ""
 }
 
 func main() {
@@ -63,4 +67,48 @@ func getSpecificCourse(w http.ResponseWriter, r *http.Request) { // this way it 
 	}
 	json.NewEncoder(w).Encode("No value found")
 	return
+}
+
+// Create , Update , Delete operation on course - file
+func createCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Create one Course")
+	w.Header().Set("content-Type", "application/json")
+
+	// body should not be empty
+	if r.Body == nil {
+		json.NewEncoder(w).Encode("Send some data")
+	}
+
+	var course course
+	_ = json.NewDecoder(r.Body).Decode(&course)
+	if course.IsEmpty() {
+		json.NewEncoder(w).Encode("No data in input")
+		return
+	}
+
+	// generate unique id , string
+	// append course into courses
+	rand.Seed(time.Now().UnixNano())
+	course.CourseId = strconv.Itoa(rand.Intn(100))
+	Courses = append(Courses, course)
+	json.NewEncoder(w).Encode("COurse added")
+
+}
+
+func updateCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Update Course")
+	w.Header().Set("content-Type", "application/json")
+
+	// grab id from request,remove, add with my id
+	params := mux.Vars(r)
+	for index, val := range Courses {
+		if val.CourseId == params["id"] {
+			Courses = append(Courses[:index], Courses[index+1:]...) // remove
+			var course course
+			_ = json.NewDecoder(r.Body).Decode(&course)
+			course.CourseId = params["id"]
+			Courses = append(Courses, course)
+			json.NewEncoder(w).Encode(course)
+		}
+	}
 }
