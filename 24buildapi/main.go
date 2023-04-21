@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -12,10 +13,10 @@ import (
 )
 
 // Model for course file
-type course struct {
-	CourseId    string  `json:"Id"`
-	CourseName  string  `json:"Name"`
-	CoursePrice int     `json:"Price"`
+type Course struct {
+	CourseId    string  `json:"CourseId"`
+	CourseName  string  `json:"CourseName"`
+	CoursePrice int     `json:"CoursePrice"`
 	Author      *Author `json:"Author"`
 }
 
@@ -25,16 +26,35 @@ type Author struct {
 }
 
 // Fake DB
-var Courses []course
+var Courses []Course
 
 // Middleware , helper - file
-func (c *course) IsEmpty() bool {
+func (c *Course) IsEmpty() bool {
 	//return c.CourseId == "" && c.CourseName == ""
 	return c.CourseName == ""
 }
 
 func main() {
 
+	fmt.Println("API WORING")
+
+	r := mux.NewRouter()
+
+	// seeding
+	Courses = append(Courses, Course{CourseId: "2", CourseName: "React", CoursePrice: 70, Author: &Author{Fullname: "Dev", Website: "lo.io"}})
+	Courses = append(Courses, Course{CourseId: "5", CourseName: "js", CoursePrice: 90, Author: &Author{Fullname: "pk", Website: "plo.io"}})
+	Courses = append(Courses, Course{CourseId: "7", CourseName: "java", CoursePrice: 170, Author: &Author{Fullname: "ouy", Website: "ldgyddfo.io"}})
+
+	// routing
+	r.HandleFunc("/", Servehome).Methods("GET")
+	r.HandleFunc("/courses", getCourses).Methods("GET")
+	r.HandleFunc("/courses/{id}", getSpecificCourse).Methods("GET")
+	r.HandleFunc("/courses", createCourse).Methods("POST")
+	r.HandleFunc("/courses/{id}", updateCourse).Methods("PUT")
+	r.HandleFunc("/courses/{id}", deleteCouerse).Methods("DELETE")
+
+	// listen to a port
+	log.Fatal(http.ListenAndServe(":4000", r))
 }
 
 // controller - file
@@ -79,10 +99,10 @@ func createCourse(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode("Send some data")
 	}
 
-	var course course
+	var course Course
 	_ = json.NewDecoder(r.Body).Decode(&course)
 	if course.IsEmpty() {
-		json.NewEncoder(w).Encode("No data in input")
+		json.NewEncoder(w).Encode("No data in JSON")
 		return
 	}
 
@@ -91,7 +111,8 @@ func createCourse(w http.ResponseWriter, r *http.Request) {
 	rand.Seed(time.Now().UnixNano())
 	course.CourseId = strconv.Itoa(rand.Intn(100))
 	Courses = append(Courses, course)
-	json.NewEncoder(w).Encode("COurse added")
+	json.NewEncoder(w).Encode(course)
+	return
 
 }
 
@@ -104,7 +125,7 @@ func updateCourse(w http.ResponseWriter, r *http.Request) {
 	for index, val := range Courses {
 		if val.CourseId == params["id"] {
 			Courses = append(Courses[:index], Courses[index+1:]...) // remove
-			var course course
+			var course Course
 			_ = json.NewDecoder(r.Body).Decode(&course)
 			course.CourseId = params["id"]
 			Courses = append(Courses, course)
