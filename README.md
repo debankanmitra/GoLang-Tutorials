@@ -17,6 +17,7 @@ Features of golang :
  13) Memory allocationand deallocation happens automatically
  14) The garbage collector in Go uses a mark-and-sweep algorithm to perform garbage collection. The algorithm works by marking all memory that is currently in use, then sweeping through the memory to identify and free up memory that is not marked. Garbage collection is a memory management technique that automatically frees up memory that is no longer in use by the program. 
  15) array is very less used and slices is mostly used in golang
+ 16) In the root directory there can be only 1 main.go file
 
 
 
