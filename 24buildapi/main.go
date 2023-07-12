@@ -45,7 +45,7 @@ func main() {
 	Courses = append(Courses, Course{CourseId: "5", CourseName: "js", CoursePrice: 90, Author: &Author{Fullname: "pk", Website: "plo.io"}})
 	Courses = append(Courses, Course{CourseId: "7", CourseName: "java", CoursePrice: 170, Author: &Author{Fullname: "ouy", Website: "ldgyddfo.io"}})
 
-	// routing
+	// routing , api end points
 	r.HandleFunc("/", Servehome).Methods("GET")
 	r.HandleFunc("/courses", getCourses).Methods("GET")
 	r.HandleFunc("/courses/{id}", getSpecificCourse).Methods("GET")
